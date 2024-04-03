@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="root"></div>
+</body>
+<script src="https://www.unpkg.com/react@18.2.0/umd/react.development.js"></script>
+<script src="https://www.unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+    // Your  code will go here
+    let root = ReactDOM.createRoot(document.getElementById("root"));
+
+    function App() {
+        // State to manage todo list
+        const [todo, setTodo] = React.useState("");
+        const [todos, setTodos] = React.useState([]);
+        const [editId, setEditId] = React.useState(0);
+        const [status, setStatus] = React.useState("Mark as Complete");
+        const [filter, setFilter] = React.useState("all");
+
+        // Function to handle submit 
+        const handleSubmit = (e) => {
+            e.preventDefault();
+
+            if (editId) {
+                const editTodo = todos.find((todo) => todo.id === editId);
+                const updatedTodos = todos.map((t) =>
+                    t.id === editTodo.id
+                        ? (t = { id: t.id, todo })
+                        : { id: t.id, todo: t.todo }
+                );
+                setTodos(updatedTodos);
+                setEditId(0);
+                setTodo("");
+                return;
+            }
+
+            if (todo !== "") {
+                setTodos([{ id: `${todo}-${Date.now()}`, todo, status }, ...todos]);
+                setTodo("");
+            }
+        }
+
+        // Function to handle status
+        const handleStatus = (id) => {
+            const updatedTodos = todos.map((todo) =>
+                todo.id === id ? { ...todo, status: "Completed" } : todo
+            );
+            setTodos(updatedTodos);
+        };
+
+        const handleFilterChange = (value) => {
+            setFilter(value);
+        }
+
+        let filteredTodos = todos;
+
+        if (filter === "active") {
+            filteredTodos = todos.filter(todo => todo.status !== "Completed");
+        } else if (filter === "completed") {
+            filteredTodos = todos.filter(todo => todo.status === "Completed");
+        }
+
+        // Function to handle edit
+        const handleEdit = (id) => {
+            const editTodo = todos.find((todo) => todo.id === id);
+            setTodo(editTodo.todo);
+            setEditId(id);
+        }
+
+        //Function to handle delete
+        const handleDelete = (id) => {
+            const delTodo = todos.filter((to) => to.id !== id);
+            console.log(delTodo);
+            setTodos([...delTodo]);
+        }
+
+        return (
+            <div className="App">
+                <div className="container">
+                    <h1>Todo List App</h1>
+                    <form className="todoForm" onSubmit={handleSubmit}>
+                        <input type="text" value={todo} onChange={(e) => { setTodo(e.target.value) }} />
+                        <button type="submit">{editId ? "Edit" : "Go"}</button>
+                    </form >
+                    <div className="filters">
+                        <button onClick={() => handleFilterChange("all")}>All</button>
+                        <button onClick={() => handleFilterChange("active")}>Active</button>
+                        <button onClick={() => handleFilterChange("completed")}>Completed</button>
+                    </div>
+                    <ul className="allTodos">
+                        {
+                            filteredTodos.map((t) => (
+                                <li key={t.id} className="singleTodo"><span className="todoText">{t.todo}</span>
+                                    <button onClick={() => { handleStatus(t.id) }}>{t.status}</button>
+                                    <button onClick={() => { handleEdit(t.id) }}>Edit</button>
+                                    <button onClick={() => { handleDelete(t.id) }}>Delete</button>
+                                </li>
+                            ))
+                        }
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    root.render(<App />)
+</script>
+
+</html>

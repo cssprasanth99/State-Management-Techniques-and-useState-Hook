@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamic Rendering of hobbies</title>
+</head>
+
+<body>
+    <div id="root"></div>
+</body>
+<script src="https://www.unpkg.com/react@18.2.0/umd/react.development.js"></script>
+<script src="https://www.unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+    // Your  code will go here
+    let root = ReactDOM.createRoot(document.getElementById("root"));
+
+
+    function App() {
+        // State to manage hobbies
+        const [hobbies, setHobbies] = React.useState(['']);
+
+        // Function to handle adding a new hobby input field
+        const handleAddHobby = () => {
+            setHobbies([...hobbies, '']);
+        };
+
+        // Function to handle removing a hobby input field
+        const handleRemoveHobby = (index) => {
+            const newHobbies = [...hobbies];
+            newHobbies.splice(index, 1);
+            setHobbies(newHobbies);
+        };
+
+        // Function to handle input change for a hobby
+        const handleHobbyChange = (index, value) => {
+            const newHobbies = [...hobbies];
+            newHobbies[index] = value;
+            setHobbies(newHobbies);
+        };
+
+        // Function to handle form submission
+        const handleSubmit = (e) => {
+            e.preventDefault();
+            console.log(hobbies);
+        };
+
+        return (
+            <form onSubmit={handleSubmit}>
+                {console.log(hobbies)};
+                {hobbies.map((hobby, index) => (
+                    <div key={index}>
+                        <input type="text" placeholder="Enter hobby" onChange={(e) => handleHobbyChange(index, e.target.value)}
+                        />
+                        {index > 0 && (
+                            <button type="button" onClick={() => handleRemoveHobby(index)}>
+                                Remove
+                            </button>
+                        )}
+                    </div>
+                ))}
+                <button type="button" onClick={handleAddHobby}>Add Hobby</button>
+                <button type="submit">Submit</button>
+            </form>
+        );
+    }
+    root.render(<App />);
+</script>
+
+</html>

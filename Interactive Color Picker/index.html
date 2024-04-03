@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Color Picker</title>
+</head>
+
+<body>
+    <div id="root"></div>
+</body>
+<script src="https://www.unpkg.com/react@18.2.0/umd/react.development.js"></script>
+<script src="https://www.unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+    // Your  code will go here
+    let root = ReactDOM.createRoot(document.getElementById("root"))
+
+    function ColorPicker() {
+        const [color, setColor] = React.useState('');
+        const [isValidColor, setIsValidColor] = React.useState(true);
+
+        const isValidHex = (hex) => {
+            if (hex.charAt(0) !== '#' || (hex.length !== 4 && hex.length !== 7)) {
+                return false;
+            }
+            for (let i = 1; i < hex.length; i++) {
+                const charCode = hex.charCodeAt(i);
+                if (!(charCode >= 48 && charCode <= 57) && // 0-9
+                    !(charCode >= 65 && charCode <= 70) && // A-F
+                    !(charCode >= 97 && charCode <= 102)) { // a-f
+                    return false;
+                }
+            }
+            return true;
+        };
+
+        const handleColorChange = (e) => {
+            const inputColor = e.target.value.trim();
+            setColor(inputColor);
+            setIsValidColor(isValidHex(inputColor));
+        };
+
+        return (
+            <div>
+                <input
+                    type="text"
+                    placeholder="Enter HEX color code"
+                    value={color}
+                    onChange={handleColorChange}
+                    style={{ marginBottom: '10px' }}
+                />
+                {!isValidColor && (
+                    <p style={{ color: 'red', marginBottom: '10px' }}>
+                        Please enter a valid HEX color code.
+                    </p>
+                )}
+                <div
+                    style={{
+                        width: '100px',
+                        height: '100px',
+                        backgroundColor: isValidColor ? color : 'transparent',
+                        border: '1px solid black'
+                    }}
+                ></div>
+            </div>
+        );
+    }
+
+    root.render(<ColorPicker />);
+
+</script>
+
+</html>
